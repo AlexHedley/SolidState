@@ -1,0 +1,2 @@
+# SolidState
+Statiq Theme
