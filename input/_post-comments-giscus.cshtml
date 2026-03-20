@@ -1,0 +1,21 @@
+@{
+    var repo = Document.GetString("GiscusRepo", string.Empty);
+    var repoId = Document.GetString("GiscusRepoId", string.Empty);
+    var category = Document.GetString("GiscusCategory", string.Empty);
+    var categoryId = Document.GetString("GiscusCategoryId", string.Empty);
+}
+@if (!string.IsNullOrEmpty(repo) && !string.IsNullOrEmpty(repoId))
+{
+    <script src="https://giscus.app/client.js"
+            data-repo="@repo"
+            data-repo-id="@repoId"
+            data-category="@category"
+            data-category-id="@categoryId"
+            data-mapping="pathname"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-theme="light"
+            crossorigin="anonymous"
+            async>
+    </script>
+}

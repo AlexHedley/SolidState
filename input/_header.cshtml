@@ -1,0 +1,53 @@
+@{
+    bool isPost = Document.GetBool("IsPost") && !Document.GetBool("IsPostArchive");
+    bool isPage = Document.GetBool("IsPage");
+    string title = Document.GetString("Title") ?? Context.GetString("SiteTitle");
+    string description = Document.WithoutSettings().GetString("Lead") ?? Document.WithoutSettings().GetString("Description");
+    var image = Document.GetString("Image", string.Empty);
+}
+@if (isPost || isPage)
+{
+    <section id="banner">
+        <div class="inner">
+            <h2>@title</h2>
+            @if (!string.IsNullOrWhiteSpace(description))
+            {
+                <p>@description</p>
+            }
+            @if (isPost)
+            {
+                <p><em>Published on @Document.GetDateTime("Published").ToLongDateString(Context)</em></p>
+                @if (Document.ContainsKey("Tags"))
+                {
+                    <div>
+                        @foreach (IDocument tag in Document.GetList<string>("Tags")
+                            .Select(x => Outputs["tags/index.html"].First().GetChildren().FirstOrDefault(y => y.GetTitle().Equals(x, StringComparison.OrdinalIgnoreCase)))
+                            .Where(x => x != null))
+                        {
+                            <a role="button" href="@Context.GetLink(tag)" class="button small">@tag.GetTitle()</a>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </section>
+}
+else
+{
+    <section id="banner">
+        <div class="inner">
+            @{
+                string siteDescription = Context.GetString("Description");
+                string siteIntro = Context.GetString("Intro");
+            }
+            @if (!string.IsNullOrWhiteSpace(siteDescription))
+            {
+                <h2>@siteDescription</h2>
+            }
+            @if (!string.IsNullOrWhiteSpace(siteIntro))
+            {
+                <p>@siteIntro</p>
+            }
+        </div>
+    </section>
+}
