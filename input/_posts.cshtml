@@ -1,0 +1,30 @@
+@model IDocument
+
+<section class="features">
+    @foreach (IDocument post in Model.GetChildren())
+    {
+        @Html.Partial("/_post.cshtml", post)
+    }
+</section>
+
+@{
+    IDocument newer = Model.GetDocument(Keys.Previous);
+    IDocument older = Model.GetDocument(Keys.Next);
+}
+@if (older != null || newer != null)
+{
+    <ul class="actions">
+        @if (newer != null)
+        {
+            <li>
+                <a href="@Context.GetLink(newer)" class="button"><span aria-hidden="true">&larr;</span> Newer</a>
+            </li>
+        }
+        @if (older != null)
+        {
+            <li>
+                <a href="@Context.GetLink(older)" class="button">Older <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        }
+    </ul>
+}

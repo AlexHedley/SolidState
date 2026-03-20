@@ -1,0 +1,54 @@
+ShowInNavbar: => GetInt("Index") <= 1
+Order: 99
+IsPostArchive: true
+Title: Posts
+ArchiveSources: => GetString("PostSources")
+ArchiveFilter: => GetBool("IsPost")
+ArchiveOrderKey: Published
+ArchiveOrderDescending: true
+ArchiveDestination: >
+  => GetInt("Index") <= 1 ? $"posts/index.html" : $"posts/page/{GetInt("Index")}.html"
+ArchiveTitle: => GetString("Title")
+---
+@foreach(IGrouping<int, IDocument> group in Document
+    .GetChildren()
+    .GroupBy(x => x.GetDateTime("Published").Year)
+    .OrderByDescending(x => x.Key))
+{
+    <h1>@group.Key</h1>
+    <hr />
+    foreach (IDocument post in group)
+    {
+        string lead = post.GetString("Lead");
+        <div>
+            <h3><a href="@Context.GetLink(post)">@post.GetTitle()</a></h3>
+            @if (!string.IsNullOrWhiteSpace(lead))
+            {
+                <p>@lead</p>
+            }
+            <p><em>Posted on @post.GetDateTime("Published").ToLongDateString(Context)</em></p>
+        </div>
+    }
+}
+
+@{
+    IDocument newer = Document.GetDocument(Keys.Previous);
+    IDocument older = Document.GetDocument(Keys.Next);
+}
+@if (older != null || newer != null)
+{
+    <ul class="actions">
+        @if (newer != null)
+        {
+            <li>
+                <a href="@Context.GetLink(newer)" class="button"><span aria-hidden="true">&larr;</span> Newer</a>
+            </li>
+        }
+        @if (older != null)
+        {
+            <li>
+                <a href="@Context.GetLink(older)" class="button">Older <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        }
+    </ul>
+}
